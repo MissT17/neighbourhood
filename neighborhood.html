@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Your neighborhood</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    </head>
+    <body>
+        <div id="locations_container" class="container-fluid">
+            <div class="row">
+                <div id="fields" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <div id="logo">
+                            <img height="100" alt="logo" src="images/logo.png">
+                    </div>
+                    <!-- Initial content with the default list of locations-->
+                    <div id="New-York">
+                        <p style = "padding-bottom:10px; font-size: 16px;">To find how the Best Recs in Town work,
+                        discover the list of suggested places in New York and narrow down your choice by filtering
+                        the locations. When you feel ready, share your location and enjoy.
+                        </p>
+                        <p style = "padding-left:10px; font-weight: bold; text-align:center">To narrow down your choice,
+                            start filtering by typing in <br> the first letters of your favourite place to check if it's in the list.
+                        </p>
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control .input-group-sm .location_selector" 
+                                data-bind="value: searched_position, valueUpdate: 'keyup'" 
+                                placeholder="Please select one of the addresses below or start typing the address">
+                        </div>
+                        <div class="list_of_locations"><span style="color: #B22222; font-weight:bold; font-size:25px;">List of recommendations:</span>
+                            <ul id="places_list" data-bind="foreach: locations">
+                                <li class="locations_list" data-bind="click: $parent.new_selected, css:{red_text: on()}, visible: visibility, text: title()"></li>
+                            </ul>
+                            <button class="btn btn-md btn-block btn-danger .shareLoc" style="margin-top:10px;" onclick="shareLoc()">Feel ready to share your location?</button>
+                        </div>
+                    </div>
+                    <!-- Content displayed when the user clicks to share his/her location-->
+                    <div style="display:none;" id="share-location">
+                        <p style = "text-align:center; font-weight: bold;">1.Identify the places of your
+                            dreams around where you live.<br>Type in the type of place you are looking for.
+                        </p>    
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control .input-group-sm" 
+                                id="user_input_keyword" 
+                                data-bind="value: user_keyword, valueUpdate: 'keyup'" 
+                                placeholder="Please type in the type of place you are looking for (ex. coffee, library, etc.)">
+                        </div>
+                        <p style = "padding-left:10px;  padding-top:20px; font-weight: bold; text-align:center">2.To narrow
+                            down your choice, start filtering by typing in <br> the first letters of your
+                            favourite place to check if it's in the list.
+                        </p>
+                        <!-- Content that appears when the user decides not the change his/her location in teh browser -->
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                class="form-control .input-group-sm .location_selector" 
+                                data-bind="value: searched_position, valueUpdate: 'keyup'" 
+                                placeholder="Please start typing the address of your choice">
+                        </div>
+                        <div class="list_of_locations"><span style="color: #B22222; font-weight:bold; font-size:25px;">List of recommendations:</span>
+                            <ul data-bind="foreach: locations">
+                                <li class="locations_list" data-bind="click: $parent.new_selected, css:{red_text: on()}, visible: visibility, text: title()"></li>
+                            </ul>
+                            <div id="location_options" style="display:none;">
+                                <button id="BackToNY" class="btn btn-md btn-block btn-danger" style="margin-top:10px;" onclick="backToNY()">Not ready to share my location. Take me back to NY locations.</button>
+                                <button class="btn btn-md btn-block btn-danger .shareLoc" style="margin-top:10px;" onclick="shareLoc()">Feel ready to share your locations?</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="location_details">
+                    </div>
+                </div>
+                <!-- Map container-->
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+                    <div id="map_container"></div>
+                    <div id="loader1" style="display:none;"><img alt="loader" src="images/ajax-loader.gif"></div>
+                </div>
+            </div>
+            <div id="footer">@Copyright. All the additional information (images, opening hours, etc.) about locations is provided by Foursquare.</div>  
+        </div>
+        <div class="modal fade" role="dialog" id="no_geo">
+            <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">×</button>
+                        <h4 class="modal-title">Error: geolocation failed</h4>
+                    </div>
+                    <div class="modal-body">
+                        The geolocation service failed. Please make sure that you activated geolocation in your browser.
+                    </div>
+                </div>
+            </div>
+        </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="knockout.3.4.2.js"></script>
+    <script src="credentials.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="foursquare.js" ></script>
+    <script src="neighborhood.js" ></script>
+    <script>
+        var map;
+        var markers = [];
+        var pos = {};
+        var infowindow;
+        var place;
+
+        function initMap() {
+
+            map = new google.maps.Map(document.getElementById('map_container'), {
+                center: {lat:40.7713024, lng:-73.9632393},
+                zoom: 12,
+            });
+
+            infowindow = new google.maps.InfoWindow();
+        
+            // Set markers for all locations in the list 
+
+            locations.forEach(function(item){
+                setMarker(item.title,item.location);
+                marker.setMap(map);
+                markers.push(marker);
+                marker.addListener('click', function(){
+                    var places = locations.indexOf(item);
+                    $("#places_list li:eq("+places+")").trigger("click");  // Imitates the click on the list item, if the marker created from the default lits of locations is clicked. 
+                    info_marker(this, infowindow);
+                    highlight(this.position);
+                });
+                marker.addListener('click', toggleBounce);
+                google.maps.event.addListener(infowindow,'closeclick', function(){  // Controls the behavior of the marker if the info window is closed.
+                    for (var i = 0; i < markers.length; i++) {
+                        if ((markers[i].position.lat()+0.01 == infowindow.position.lat())
+                            || (markers[i].position.lng() == infowindow.position.lng())){
+                            markers[i].setAnimation(null);
+                            markers[i].setIcon(null);
+                        }
+                    };  
+                });
+            });
+            return infowindow;
+        }
+    
+    // Reloads the page if the iser does not share the location.
+
+        function backToNY(){
+            location.reload();
+        }
+
+        // Function that triggers a number of actions based on whether the user shares or not his/her location.
+
+        function shareLoc(){
+            document.getElementById("location_options").style.display = "none";
+            var share_location = document.getElementById("share-location");
+            document.getElementById("New-York").style.display = "none";
+            share_location.style.display = "block";
+            document.getElementById("user_input_keyword").value = "";
+            $("#user_input_keyword").trigger("keyup");
+            if (navigator.geolocation) {
+                document.getElementById("loader1").style.display = "block";
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                };
+                var geo_marker = setMarker('You are here', pos);  // Set the marker displaying the position of the user.
+                geo_marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+                geo_marker.setMap(map);
+                map.setCenter(pos);
+                marker.addListener('mouseover', function(){
+                    infowindow.setPosition(pos);
+                    infowindow.setContent('You are here.');
+                    infowindow.open(map);
+                });
+                document.getElementById("loader1").style.display = "none";
+                }, function() {
+                handleLocationError(true);
+                });
+            } else {
+                handleLocationError(false);  // Browser doesn't support Geolocation
+            }
+        }
+
+        // Function that handles the dynamic display of various parts of
+        // the website in the case the user decides not to share his/her
+        // geolocation with the application. 
+
+        function handleLocationError(browserHasGeolocation) {
+            $('#no_geo').modal();
+            document.getElementById("location_options").style.display = "block";
+            document.getElementById("loader1").style.display = "none";
+        }
+
+        // Set the marker on the map
+
+        function setMarker(title, marker_pos){
+            marker = new google.maps.Marker({
+                position: marker_pos,
+                title: title,
+                animation: google.maps.Animation.DROP  
+            });
+            return marker;
+        }
+
+        // Controls the display of all markers on the map.
+
+        function setMapOnAll(map) {
+            for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(map);
+                }  
+        }
+
+
+        // Allows to change the marker color and make the marker bounce on interaction of a user with it.
+
+        function toggleBounce(){
+            if (this.getAnimation() !== null){
+                this.setAnimation(null);
+                this.setIcon(null);
+            } else {
+                this.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
+                this.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        }
+        
+        // Allows to create infowindows with details on location, when the location on the map is clicked.
+
+        function info_marker(marker, infowindow){
+            marker_position = {lat:marker.position.lat()+0.003, lng:marker.position.lng()};
+            infowindow.setPosition(marker_position);
+            infowindow.setContent("<div style='font-size:14px; margin-top:5px;'><b>"+marker.title+'</b><br>'+'</div>'+'<br>'+'<div style="margin-left:20px;" id="pano"></div>'); 
+            infowindow.open(map); 
+        }
+
+        // Helper function that allows to display the Street View of location in the infowindow.
+
+        function highlight(position){
+            var panorama = new google.maps.StreetViewPanorama(
+                document.getElementById('pano'),{
+                    position: {
+                        lat: position.lat(),
+                        lng: position.lng()
+                    },
+                    pov: {
+                        heading: 34,
+                        pitch: 10
+                    }
+                }
+            );
+            map.setStreetView(panorama);
+
+        }
+        
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCtQBMHs45bW7oU7mlMLKamoDBYvNXc_5M&callback=initMap"
+        async defer> </script>
+    </body>
+</html>
