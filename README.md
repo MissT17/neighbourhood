@@ -14,8 +14,7 @@ In this Github repository you will find the following documents:
 
 ## Requirements
 In order to test the application, you will need to get Google Maps and Foursquare API keys. In order to do that, please create developer accounts for both platforms.
-- If you do not have a Google account yet, please follow the [instructions](https://cloud.google.com/maps-platform/maps/)
-Activate Google Map API in the developer console.
+- If you do not have a Google account yet, please follow the [instructions](https://cloud.google.com/maps-platform/maps/). Activate Google Map API in the developer console.
 - Please follow the following instructions to open a [Foursquare developer account](https://foursquare.com/developers/login?continue=%2Fdevelopers%2Fapps) (If you open a Sandbox account, you will be able to preview only 1 customer photo per selected location, if you decide to upgrade the account to Personal, then 2 customer photos will be visible in the “More details about” section.)
 
 ## Installation
