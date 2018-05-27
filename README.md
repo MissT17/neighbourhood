@@ -22,7 +22,13 @@ In order to test the application, you will need to get Google Maps and Foursquar
   ```
   $ git clone https://github.com/MissT17/neighbourhood
   ```
-2. Open *credentials.js* file and insert your respective keys and credentials in the pre-defined fields and “Save” the file.
+2. Create *credentials.js* file and insert the code below with your respective keys and credentials in the pre-defined fields and “Save” the file.
+  ```
+  credentials = {
+    client_id: 'YOUR API Key',
+    client_secret: 'YOUR FOURSQUARE SECRET'
+  }
+  ```
 3. Open *neighborhood.html* file in the browser and start navigation.
 
 ## Expected Outcome
