@@ -21,9 +21,19 @@ Activate Google Map API in the developer console.
 ## Installation
 1. Clone the Github repository to your local machine
 ```
+git clone https://github.com/MissT17/neighbourhood.git
 ```
 
-2. Open *credentials.js* file and insert your respective keys and credentials in the pre-defined fields and “Save” the file.
+2. Create *credentials.js* file
+```
+//Credentials and API keys for Foursquare API activation
+
+credentials = {
+     client_id: 'YOUR API Key',
+     client_secret: 'YOUR FOURSQUARE SECRET'
+}
+```
+and insert your respective keys and credentials in the pre-defined fields and “Save” the file.
 3. Open *neighborhood.html* file in the browser and start navigation.
 
 ## Expected Outcome
