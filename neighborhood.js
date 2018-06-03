@@ -1,5 +1,5 @@
-// A default list of locations, in case the user
-// does not share his/her location.
+/* A default list of locations, in case the user
+does not share his/her location. */
 
 var locations = [
     {title: "Park Ave Penthouse",
@@ -22,6 +22,7 @@ var locations = [
     on: false}
     ];
 
+
 // Create the Knockout.js location object
 
 var Location = function (location) {
@@ -34,13 +35,15 @@ var Location = function (location) {
     self.id = ko.observable(location.id);
 };
 
-// Declaration of the variable that will contain user
-// input necessary for the search of locations.
+
+/* Declaration of the variable that will contain user
+input necessary for the search of locations. */
 
 var query = "";
 
-// Function that allows to transform a simple list
-// into a list of Knockout.js objects.
+
+/* Function that allows to transform a simple list
+into a list of Knockout.js objects. */
 
 function list(data){
     var list_of_locations = [];
@@ -51,15 +54,16 @@ function list(data){
     return list_of_locations;
 }
 
+
 // Initialization of the Knockout.js ViewModel
 
 function LocationViewModel(){
     var self = this;
-    // Declaration of the user input as Knockout.js object that will be
-    // dynamically updated.
+    /* Declaration of user input as Knockout.js object that will be
+    dynamically updated. */
     self.user_keyword = ko.observable();
-    // Time limitation that allows to hold off the request
-    // to Foursquare until the user completes the request.
+    /* Time limitation that allows to hold off the request
+    to Foursquare until the user completes the request. */
     self.user_keyword.extend({ rateLimit: 500 });
     // Proactive listening to the latest updates of the user input.
     self.user_keyword.subscribe(function (newText) {
@@ -72,17 +76,19 @@ function LocationViewModel(){
         }
     });
 
-    // Function adds a css .on class  the content when the user interacts with
-    // the list of locations.
+
+    /* Function activates clicked locations in the list and
+    displays the location details when the user interacts with
+    the list of locations. */
+
     self.new_selected = function(){
         if (this.on() === false){
             this.on(true);
-            // On click user can see additional information about a location.
             if (this.id() !== undefined){
                 foursquare_details(this.id());
             }
-            // Allows to control the display of markers on the map for
-            // selected locations in the list.
+            /* Allows to control the display of markers on the map for
+            selected locations in the list. */
             for (i=0;i<self.locations().length; i++){
                 if (this.title() === self.locations()[i].title()){
                     markers[i].setVisible(true);
@@ -97,6 +103,38 @@ function LocationViewModel(){
             for (i=0;i<self.locations().length; i++){
                 if(this.title() === self.locations()[i].title()){
                     markers[i].setVisible(false);
+                    /* Display of location details at
+                    the bottom of the screen. */
+                    list_foursquare.forEach(function(element){
+                        if (element.name === markers[i].title){
+                            position_number = list_foursquare.indexOf(element);
+                            if (list_foursquare.length > 1){
+                                list_foursquare.splice(position_number, 1);
+                                var last_call = list_foursquare[list_foursquare.length-1];
+                                var content = `<div>
+                                    <p style="color: #B22222; font-weight:bold;
+                                        font-size:20px; text-align:center;">
+                                    More details about the <i>${last_call.name}:<i></p>
+                                    <p><b>Description:</b> ${last_call.description}<br>
+                                    <b>Home:</b> ${last_call.phone} <br>
+                                    <b>Opening hours:</b> ${last_call.hours}<br>
+                                    <b>Latest shared photos by customers:</b><br>
+                                    <img style="margin-top:10px; margin-left:20px;"
+                                        src="${last_call.photo1}">
+                                    <img style="margin-top:10px; margin-left:20px;"
+                                        src="${last_call.photo2}">
+                                    </p>
+                                    </div>`;
+                                document.getElementById("location_details")
+                                    .innerHTML = content;
+                            } else {
+                                list_foursquare.splice(position_number, 1);
+                                content = "";
+                                document.getElementById("location_details")
+                                    .innerHTML = content;
+                            }
+                        }
+                    });
                     new_status(self.locations());
                 } else {
                     if (self.locations()[i].on() === true){
@@ -109,12 +147,13 @@ function LocationViewModel(){
         }
     };
 
-    // Function that allows to control the display of all markers on the map
-    // if none of the locations is specifically selected.
+
+    /* Function that allows to control the display of all markers on the map,
+    if none of the locations is specifically selected. */
 
     function new_status(all_locations){
         change_status = [];
-        for (i=0;i<all_locations.length; i++){
+        for (i=0; i<all_locations.length; i++){
             if (all_locations[i].on() === false){
                 change_status.push(all_locations[i].on());
             }
@@ -129,19 +168,27 @@ function LocationViewModel(){
     self.searched_position = ko.observable();
     self.locations = ko.observableArray(list(locations));
 
-    // Procative listening to the modifications of the location list to
-    // change the markers on the map.
+
+    /* Proactive listening to the modifications of the location list and
+    change of markers on the map. */
 
     self.locations.subscribe(function(new_loc){
         setMapOnAll(null);
         markers = [];
+        selected_places = document.getElementById("places_list")
+                        .getElementsByTagName("li");
         new_loc.forEach(function(loc){
             var marker_pos = {lat:loc.lat(), lng:loc.lng()};
             setMarker(loc.title(),marker_pos).setMap(map);
             markers.push(marker);
             marker.addListener("click", function(){
                 info_marker(this, infowindow);
-                loc.on(true);
+                title = this.title;
+                Array.from(selected_places).forEach(function(item){
+                    if ((item.textContent == title) && (loc.on(false))){
+                        item.click();
+                    }
+                });
                 highlight(this.position);
             });
             marker.addListener("click", toggleBounce);
@@ -149,10 +196,14 @@ function LocationViewModel(){
     });
 
 
+    /* Proactive listening to the modifications of the field allowing to filter
+    through available locations and display of markers on the map. */
+
     self.searched_position.subscribe(function(newText){
         if (self.searched_position !== "" || self.user_keyword() !== ""){
             for(i=0; i<self.locations().length; i++){
-                if (self.locations()[i].title().indexOf(self.searched_position()) > -1){
+                if (self.locations()[i].title()
+                    .indexOf(self.searched_position()) > -1){
                         self.locations()[i].visibility(true);
                         markers[i].setMap(map);
                 } else {

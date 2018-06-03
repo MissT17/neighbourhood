@@ -27,9 +27,9 @@
                         <div class="input-group">
                             <input 
                                 type="text" 
-                                class="form-control .input-group-sm .location_selector" 
+                                class="form-control .input-group-sm location_selector" 
                                 data-bind="value: searched_position, valueUpdate: 'keyup'" 
-                                placeholder="Please select one of the addresses below or start typing the address">
+                                placeholder="Please type in the first letters of the location of your choice">
                         </div>
                         <div class="list_of_locations"><span style="color: #B22222; font-weight:bold; font-size:25px;">List of recommendations:</span>
                             <ul id="places_list" data-bind="foreach: locations">
@@ -55,11 +55,11 @@
                             down your choice, start filtering by typing in <br> the first letters of your
                             favourite place to check if it's in the list.
                         </p>
-                        <!-- Content that appears when the user decides not the change his/her location in teh browser -->
+                        <!-- Content that appears when the user decides not the change his/her location in the browser -->
                         <div class="input-group">
                             <input 
                                 type="text" 
-                                class="form-control .input-group-sm .location_selector" 
+                                class="form-control .input-group-sm location_selector" 
                                 data-bind="value: searched_position, valueUpdate: 'keyup'" 
                                 placeholder="Please start typing the address of your choice">
                         </div>
@@ -112,6 +112,8 @@
         var infowindow;
         var place;
 
+        // Google Maps initiation.
+
         function initMap() {
 
             map = new google.maps.Map(document.getElementById('map_container'), {
@@ -121,6 +123,7 @@
 
             infowindow = new google.maps.InfoWindow();
         
+
             // Set markers for all locations in the list 
 
             locations.forEach(function(item){
@@ -129,31 +132,38 @@
                 markers.push(marker);
                 marker.addListener('click', function(){
                     var places = locations.indexOf(item);
-                    $("#places_list li:eq("+places+")").trigger("click");  // Imitates the click on the list item, if the marker created from the default lits of locations is clicked. 
+                    /* Imitates the click on the list item, if the marker created from
+                    the default list of locations is clicked. */
+                    if (!$("#places_list li:eq("+places+")").hasClass("red_text")){
+                        $("#places_list li:eq("+places+")").trigger("click")}; 
                     info_marker(this, infowindow);
                     highlight(this.position);
+                    this.setVisible(true);
                 });
                 marker.addListener('click', toggleBounce);
-                google.maps.event.addListener(infowindow,'closeclick', function(){  // Controls the behavior of the marker if the info window is closed.
+                // Controls the behavior of the marker, if the infowindow is closed.
+                google.maps.event.addListener(infowindow,'closeclick', function(){
                     for (var i = 0; i < markers.length; i++) {
                         if ((markers[i].position.lat()+0.01 == infowindow.position.lat())
                             || (markers[i].position.lng() == infowindow.position.lng())){
                             markers[i].setAnimation(null);
                             markers[i].setIcon(null);
+                            markers[i].setVisible(true);
                         }
-                    };  
+                    };
                 });
             });
             return infowindow;
         }
     
-    // Reloads the page if the iser does not share the location.
+    // Reloads the page, if the user does not share the location.
 
         function backToNY(){
             location.reload();
         }
 
-        // Function that triggers a number of actions based on whether the user shares or not his/her location.
+        /* Function that triggers actions based on
+        whether the user shares or not his/her location. */
 
         function shareLoc(){
             document.getElementById("location_options").style.display = "none";
@@ -169,7 +179,7 @@
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                 };
-                var geo_marker = setMarker('You are here', pos);  // Set the marker displaying the position of the user.
+                var geo_marker = setMarker('You are here', pos);  // Sets the marker displaying the position of the user.
                 geo_marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
                 geo_marker.setMap(map);
                 map.setCenter(pos);
@@ -183,13 +193,14 @@
                 handleLocationError(true);
                 });
             } else {
-                handleLocationError(false);  // Browser doesn't support Geolocation
+                handleLocationError(false);  // Browser doesn't support geolocation
             }
         }
 
-        // Function that handles the dynamic display of various parts of
-        // the website in the case the user decides not to share his/her
-        // geolocation with the application. 
+
+        /* Function that handles the dynamic display of various parts of
+        the website in case the user decides not to share his/her
+        geolocation with the application. */
 
         function handleLocationError(browserHasGeolocation) {
             $('#no_geo').modal();
@@ -197,7 +208,8 @@
             document.getElementById("loader1").style.display = "none";
         }
 
-        // Set the marker on the map
+
+        // Sets the marker on the map
 
         function setMarker(title, marker_pos){
             marker = new google.maps.Marker({
@@ -208,6 +220,7 @@
             return marker;
         }
 
+
         // Controls the display of all markers on the map.
 
         function setMapOnAll(map) {
@@ -217,28 +230,32 @@
         }
 
 
-        // Allows to change the marker color and make the marker bounce on interaction of a user with it.
+        /* Allows to change the marker color and make the marker
+        bounce on user's interaction with it. */
 
         function toggleBounce(){
             if (this.getAnimation() !== null){
                 this.setAnimation(null);
-                this.setIcon(null);
+                // this.setIcon(null);
             } else {
                 this.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
                 this.setAnimation(google.maps.Animation.BOUNCE);
             }
         }
         
-        // Allows to create infowindows with details on location, when the location on the map is clicked.
+
+        /* Allows to create infowindows with location details, when
+        the location on the map is clicked. */
 
         function info_marker(marker, infowindow){
             marker_position = {lat:marker.position.lat()+0.003, lng:marker.position.lng()};
             infowindow.setPosition(marker_position);
-            infowindow.setContent("<div style='font-size:14px; margin-top:5px;'><b>"+marker.title+'</b><br>'+'</div>'+'<br>'+'<div style="margin-left:20px;" id="pano"></div>'); 
+            infowindow.setContent("<div style='font-size:14px; margin-top:5px;'><b>"+marker.title+'</b><br>'+'</div>'+'<br>'+'<div id="pano"></div>'); 
             infowindow.open(map); 
         }
 
-        // Helper function that allows to display the Street View of location in the infowindow.
+
+        // Helper function that allows to display the street view of location in the infowindow.
 
         function highlight(position){
             var panorama = new google.maps.StreetViewPanorama(
