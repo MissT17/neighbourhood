@@ -16,7 +16,7 @@
                             <img height="100" alt="logo" src="images/logo.png">
                     </div>
                     <!-- Initial content with the default list of locations-->
-                    <div id="New-York">
+                    <div id="New-York" data-bind="visible:New_York_visible;">
                         <p style = "padding-bottom:10px; font-size: 16px;">To find how the Best Recs in Town work,
                         discover the list of suggested places in New York and narrow down your choice by filtering
                         the locations. When you feel ready, share your location and enjoy.
@@ -28,18 +28,18 @@
                             <input 
                                 type="text" 
                                 class="form-control .input-group-sm location_selector" 
-                                data-bind="value: searched_position, valueUpdate: 'keyup'" 
+                                data-bind="textInput: searched_position" 
                                 placeholder="Please type in the first letters of the location of your choice">
                         </div>
                         <div class="list_of_locations"><span style="color: #B22222; font-weight:bold; font-size:25px;">List of recommendations:</span>
                             <ul id="places_list" data-bind="foreach: locations">
-                                <li class="locations_list" data-bind="click: $parent.new_selected, css:{red_text: on()}, visible: visibility, text: title()"></li>
+                                <li class="locations_list" data-bind="click: $parent.new_selected, css:{red_text: on()}, visible: visibility, text: title"></li>
                             </ul>
-                            <button class="btn btn-md btn-block btn-danger .shareLoc" style="margin-top:10px;" onclick="shareLoc()">Feel ready to share your location?</button>
+                            <button class="btn btn-md btn-block btn-danger .shareLoc" style="margin-top:10px; margin-bottom:20px;" data-bind="click: shareLoc">Feel ready to share your location?</button>
                         </div>
                     </div>
                     <!-- Content displayed when the user clicks to share his/her location-->
-                    <div style="display:none;" id="share-location">
+                    <div id="share-location" data-bind="visible:share_location_visible">
                         <p style = "text-align:center; font-weight: bold;">1.Identify the places of your
                             dreams around where you live.<br>Type in the type of place you are looking for.
                         </p>    
@@ -48,7 +48,7 @@
                                 type="text" 
                                 class="form-control .input-group-sm" 
                                 id="user_input_keyword" 
-                                data-bind="value: user_keyword, valueUpdate: 'keyup'" 
+                                data-bind="textInput: user_keyword" 
                                 placeholder="Please type in the type of place you are looking for (ex. coffee, library, etc.)">
                         </div>
                         <p style = "padding-left:10px;  padding-top:20px; font-weight: bold; text-align:center">2.To narrow
@@ -65,21 +65,21 @@
                         </div>
                         <div class="list_of_locations"><span style="color: #B22222; font-weight:bold; font-size:25px;">List of recommendations:</span>
                             <ul data-bind="foreach: locations">
-                                <li class="locations_list" data-bind="click: $parent.new_selected, css:{red_text: on()}, visible: visibility, text: title()"></li>
+                                <li class="locations_list" data-bind="click: $parent.new_selected, css:{red_text: on()}, visible: visibility, text: title"></li>
                             </ul>
-                            <div id="location_options" style="display:none;">
-                                <button id="BackToNY" class="btn btn-md btn-block btn-danger" style="margin-top:10px;" onclick="backToNY()">Not ready to share my location. Take me back to NY locations.</button>
-                                <button class="btn btn-md btn-block btn-danger .shareLoc" style="margin-top:10px;" onclick="shareLoc()">Feel ready to share your locations?</button>
+                            <div id="location_options" data-bind="visible:location_options_visible;">
+                                <button id="BackToNY" class="btn btn-md btn-block btn-danger" style="margin-top:10px;" data-bind="click:backToNY">Not ready to share my location. Take me back to NY locations.</button>
+                                <button class="btn btn-md btn-block btn-danger .shareLoc" style="margin-top:10px;" data-bind="click: shareLoc">Feel ready to share your locations?</button>
                             </div>
                         </div>
                     </div>
-                    <div id="location_details">
+                    <div id="location_details" data-bind="html: location_details">
                     </div>
                 </div>
                 <!-- Map container-->
                 <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
                     <div id="map_container"></div>
-                    <div id="loader1" style="display:none;"><img alt="loader" src="images/ajax-loader.gif"></div>
+                    <div id="loader1" data-bind="visible:loader_visible;"><img alt="loader" src="images/ajax-loader.gif"></div>
                 </div>
             </div>
             <div id="footer">@Copyright. All the additional information (images, opening hours, etc.) about locations is provided by Foursquare.</div>  
@@ -104,178 +104,9 @@
     <script src="credentials.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="foursquare.js" ></script>
+    <script src="data.js" ></script>
     <script src="neighborhood.js" ></script>
-    <script>
-        var map;
-        var markers = [];
-        var pos = {};
-        var infowindow;
-        var place;
-
-        // Google Maps initiation.
-
-        function initMap() {
-
-            map = new google.maps.Map(document.getElementById('map_container'), {
-                center: {lat:40.7713024, lng:-73.9632393},
-                zoom: 12,
-            });
-
-            infowindow = new google.maps.InfoWindow();
-        
-
-            // Set markers for all locations in the list 
-
-            locations.forEach(function(item){
-                setMarker(item.title,item.location);
-                marker.setMap(map);
-                markers.push(marker);
-                marker.addListener('click', function(){
-                    var places = locations.indexOf(item);
-                    /* Imitates the click on the list item, if the marker created from
-                    the default list of locations is clicked. */
-                    if (!$("#places_list li:eq("+places+")").hasClass("red_text")){
-                        $("#places_list li:eq("+places+")").trigger("click")}; 
-                    info_marker(this, infowindow);
-                    highlight(this.position);
-                    this.setVisible(true);
-                });
-                marker.addListener('click', toggleBounce);
-                // Controls the behavior of the marker, if the infowindow is closed.
-                google.maps.event.addListener(infowindow,'closeclick', function(){
-                    for (var i = 0; i < markers.length; i++) {
-                        if ((markers[i].position.lat()+0.01 == infowindow.position.lat())
-                            || (markers[i].position.lng() == infowindow.position.lng())){
-                            markers[i].setAnimation(null);
-                            markers[i].setIcon(null);
-                            markers[i].setVisible(true);
-                        }
-                    };
-                });
-            });
-            return infowindow;
-        }
-    
-    // Reloads the page, if the user does not share the location.
-
-        function backToNY(){
-            location.reload();
-        }
-
-        /* Function that triggers actions based on
-        whether the user shares or not his/her location. */
-
-        function shareLoc(){
-            document.getElementById("location_options").style.display = "none";
-            var share_location = document.getElementById("share-location");
-            document.getElementById("New-York").style.display = "none";
-            share_location.style.display = "block";
-            document.getElementById("user_input_keyword").value = "";
-            $("#user_input_keyword").trigger("keyup");
-            if (navigator.geolocation) {
-                document.getElementById("loader1").style.display = "block";
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                };
-                var geo_marker = setMarker('You are here', pos);  // Sets the marker displaying the position of the user.
-                geo_marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
-                geo_marker.setMap(map);
-                map.setCenter(pos);
-                marker.addListener('mouseover', function(){
-                    infowindow.setPosition(pos);
-                    infowindow.setContent('You are here.');
-                    infowindow.open(map);
-                });
-                document.getElementById("loader1").style.display = "none";
-                }, function() {
-                handleLocationError(true);
-                });
-            } else {
-                handleLocationError(false);  // Browser doesn't support geolocation
-            }
-        }
-
-
-        /* Function that handles the dynamic display of various parts of
-        the website in case the user decides not to share his/her
-        geolocation with the application. */
-
-        function handleLocationError(browserHasGeolocation) {
-            $('#no_geo').modal();
-            document.getElementById("location_options").style.display = "block";
-            document.getElementById("loader1").style.display = "none";
-        }
-
-
-        // Sets the marker on the map
-
-        function setMarker(title, marker_pos){
-            marker = new google.maps.Marker({
-                position: marker_pos,
-                title: title,
-                animation: google.maps.Animation.DROP  
-            });
-            return marker;
-        }
-
-
-        // Controls the display of all markers on the map.
-
-        function setMapOnAll(map) {
-            for (var i = 0; i < markers.length; i++) {
-                    markers[i].setMap(map);
-                }  
-        }
-
-
-        /* Allows to change the marker color and make the marker
-        bounce on user's interaction with it. */
-
-        function toggleBounce(){
-            if (this.getAnimation() !== null){
-                this.setAnimation(null);
-                // this.setIcon(null);
-            } else {
-                this.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png');
-                this.setAnimation(google.maps.Animation.BOUNCE);
-            }
-        }
-        
-
-        /* Allows to create infowindows with location details, when
-        the location on the map is clicked. */
-
-        function info_marker(marker, infowindow){
-            marker_position = {lat:marker.position.lat()+0.003, lng:marker.position.lng()};
-            infowindow.setPosition(marker_position);
-            infowindow.setContent("<div style='font-size:14px; margin-top:5px;'><b>"+marker.title+'</b><br>'+'</div>'+'<br>'+'<div id="pano"></div>'); 
-            infowindow.open(map); 
-        }
-
-
-        // Helper function that allows to display the street view of location in the infowindow.
-
-        function highlight(position){
-            var panorama = new google.maps.StreetViewPanorama(
-                document.getElementById('pano'),{
-                    position: {
-                        lat: position.lat(),
-                        lng: position.lng()
-                    },
-                    pov: {
-                        heading: 34,
-                        pitch: 10
-                    }
-                }
-            );
-            map.setStreetView(panorama);
-
-        }
-        
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCtQBMHs45bW7oU7mlMLKamoDBYvNXc_5M&callback=initMap" onerror="myErrorFunction()" async defer> 
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCtQBMHs45bW7oU7mlMLKamoDBYvNXc_5M&callback=initMap"
-        async defer> </script>
     </body>
 </html>
