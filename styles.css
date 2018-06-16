@@ -1,352 +1,352 @@
-    html,
-    body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow-x:hidden;
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x:hidden;
+}
+
+#map_container {
+    height:770px;
+}
+
+@media (min-width: 1200px) and (max-width: 1600px){
+
+    #locations_container{
+        background-color: white;
     }
 
+    #confirmation_selector{
+        margin-bottom: 5px;
+    }
+
+    #filter{
+        margin-left: 4px;
+        margin-bottom: 5px;
+    }
+
+    #logo{
+        width:100px;
+        height:100px;
+        margin-bottom:10px;
+    }
+
+    input[placeholder]{
+        text-overflow: ellipsis; 
+        }
+
+    .input-group{
+        width:100%;
+        padding-left:20px;
+    }    
+    
+    #user_input_keyword{
+        width: 100%;
+        padding-left:20px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+    }
+
+    .location_selector{
+        width: 100%;
+        padding-left:20px;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px !important;
+    }
+
+    .list_of_locations{
+        height: 100%;
+        padding-top:20px;
+        padding-left:20px;
+        text-align:center;
+        font-size: 16px;
+    }
+
+    .red_text{
+        color:#B22222;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .list_of_locations ul{
+        padding-top:10px;
+        padding-left:20px;
+        list-style-type: none;
+    }
+
+    #pano{
+        height: 300px;
+        width:300px;
+        margin-left:20px;
+    }
+
+    #loader1 {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        background: #333;
+        width: 100%;
+        height: 100%;
+        transform: translateX(-50%);
+        transform: translate3d(-50%, -50%, 0);
+        opacity: .5;
+    }
+
+    #loader1 > img {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width:100px;
+        height:100px;
+    }
+
+    #footer{
+        background: rgb(211, 210, 210);
+        font-size: 10px;
+        margin-top: 10px;
+        margin-left: 0px;
+        padding-left: 10px;
+        padding-top: 8px;
+        height: 30px;
+        width:100%;
+    }
+
+    #location_details{
+        padding-left: 55px;
+    }
+    #New-York{
+        padding-left:20px;
+    }
+    #share-location{
+        padding-left: 30px;
+        padding-top: 20px;
+    }
+    #places_list{
+        list-style-type: none;
+    }
+}
+
+@media (min-width:416px) and (max-width: 500px) {
+    #pano{
+        height: 200px;
+        width:200px;
+        margin-left:0px;
+    }
+    .red_text{
+        color:#B22222;
+        font-weight: bold;
+        font-size: 16px;
+    }
+    #user_input_keyword, .location_selector{
+        width: 100%;
+        padding-left:20px;
+        -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+                border-radius: 4px !important;
+    }
     #map_container {
         height:770px;
+        margin-top:20px;
+        text-align:center;
     }
+    #logo img{
+        margin-left:-15px;
+    }
+    #New-York {
+        padding-left:10px;
+    }
+    .list_of_locations {
+        padding-left:0px;
+        text-align:center;
+    }
+    .list_of_locations ul{
+        padding-left:0px;
+        list-style-type: none;
+    }
+    .input-group{
+        padding-left:0px;
+        width:100%;
+    }
+    #shareLoc{
+        margin-left:0px;
+    }
+    #share-location{
+        padding-left:0px;
+    }
+    #location_details{
+        padding-left: 0px;
+    }
+    #location_details p{
+        text-align:center;
+    }
+    #loader1 >img{
+        left:38%;
+    }
+    #footer{
+        background: rgb(211, 210, 210);
+        font-size: 8px;
+        margin-top: 10px;
+        margin-left: 0px;
+        padding-left: 10px;
+        padding-top: 8px;
+        height: 35px;
+        width:100%;
+    }
+    #places_list{
+        list-style-type: none;
+    }
+}
 
-    @media (min-width: 1200px) and (max-width: 1600px){
-
-        #locations_container{
-            background-color: white;
-        }
-
-        #confirmation_selector{
-            margin-bottom: 5px;
-        }
-
-        #filter{
-            margin-left: 4px;
-            margin-bottom: 5px;
-        }
-
-        #logo{
-            width:100px;
-            height:100px;
-            margin-bottom:10px;
-        }
-
-        input[placeholder]{
-            text-overflow: ellipsis; 
-            }
-
-        .input-group{
-            width:100%;
-            padding-left:20px;
-        }    
-        
-        #user_input_keyword{
-            width: 100%;
-            padding-left:20px;
-            -webkit-border-radius: 4px;
+@media (min-width:501px) and (max-width: 1199px) {
+    #pano{
+        height: 300px;
+        width:300px;
+        margin-left:0px;
+    }
+    .red_text{
+        color:#B22222;
+        font-weight: bold;
+        font-size: 16px;
+    }
+    #user_input_keyword, .location_selector{
+        width: 100%;
+        padding-left:20px;
+        -webkit-border-radius: 4px;
             -moz-border-radius: 4px;
-            border-radius: 4px;
-        }
-
-        .location_selector{
-            width: 100%;
-            padding-left:20px;
-            -webkit-border-radius: 4px;
+                border-radius: 4px !important;
+    }
+    #map_container {
+        height:770px;
+        margin-top:20px;
+        text-align:center;
+    }
+    #logo img{
+        margin-left:-15px;
+    }
+    #New-York {
+        padding-left:10px;
+    }
+    .list_of_locations {
+        padding-left:0px;
+        text-align:center;
+    }
+    .list_of_locations ul{
+        padding-left:0px;
+        list-style-type: none;
+    }
+    .input-group{
+        padding-left:0px;
+        width:100%;
+    }
+    #shareLoc{
+        margin-left:0px;
+    }
+    #share-location{
+        padding-left:0px;
+    }
+    #location_details{
+        padding-left: 0px;
+    }
+    #location_details p{
+        text-align:center;
+    }
+    #loader1 >img{
+        left:42%;
+        top:50%;
+    }
+    #BackToNY{
+        font-size:14px;
+    }
+    #places_list{
+        list-style-type: none;
+    }
+    #footer{
+        background: rgb(211, 210, 210);
+        font-size: 10px;
+        margin-top: 10px;
+        margin-left: 0px;
+        padding-left: 10px;
+        padding-top: 8px;
+        height: 35px;
+        width:100%;
+    }
+}
+@media (min-width: 320px) and (max-width: 415px){
+    #pano{
+        height: 200px;
+        width:200px;
+        margin-left:0px;
+    }
+    .red_text{
+        color:#B22222;
+        font-weight: bold;
+        font-size: 16px;
+    }
+    #user_input_keyword, .location_selector{
+        width: 100%;
+        padding-left:20px;
+        -webkit-border-radius: 4px;
             -moz-border-radius: 4px;
-            border-radius: 4px !important;
-        }
-
-        .list_of_locations{
-            height: 100%;
-            padding-top:20px;
-            padding-left:20px;
-            text-align:center;
-            font-size: 16px;
-        }
-
-        .red_text{
-            color:#B22222;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .list_of_locations ul{
-            padding-top:10px;
-            padding-left:20px;
-            list-style-type: none;
-        }
-
-        #pano{
-            height: 300px;
-            width:300px;
-            margin-left:20px;
-        }
-
-        #loader1 {
-            display: block;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            background: #333;
-            width: 100%;
-            height: 100%;
-            transform: translateX(-50%);
-            transform: translate3d(-50%, -50%, 0);
-            opacity: .5;
-        }
-
-        #loader1 > img {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width:100px;
-            height:100px;
-        }
-
-        #footer{
-            background: rgb(211, 210, 210);
-            font-size: 10px;
-            margin-top: 10px;
-            margin-left: 0px;
-            padding-left: 10px;
-            padding-top: 8px;
-            height: 30px;
-            width:100%;
-        }
-
-        #location_details{
-            padding-left: 55px;
-        }
-        #New-York{
-            padding-left:20px;
-        }
-        #share-location{
-            padding-left: 30px;
-            padding-top: 20px;
-        }
-        #places_list{
-            list-style-type: none;
-        }
+                border-radius: 4px !important;
     }
-
-    @media (min-width:416px) and (max-width: 500px) {
-        #pano{
-            height: 200px;
-            width:200px;
-            margin-left:0px;
-        }
-        .red_text{
-            color:#B22222;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        #user_input_keyword, .location_selector{
-            width: 100%;
-            padding-left:20px;
-            -webkit-border-radius: 4px;
-                -moz-border-radius: 4px;
-                    border-radius: 4px !important;
-        }
-        #map_container {
-            height:770px;
-            margin-top:20px;
-            text-align:center;
-        }
-        #logo img{
-            margin-left:-15px;
-        }
-        #New-York {
-            padding-left:10px;
-        }
-        .list_of_locations {
-            padding-left:0px;
-            text-align:center;
-        }
-        .list_of_locations ul{
-            padding-left:0px;
-            list-style-type: none;
-        }
-        .input-group{
-            padding-left:0px;
-            width:100%;
-        }
-        #shareLoc{
-            margin-left:0px;
-        }
-        #share-location{
-            padding-left:0px;
-        }
-        #location_details{
-            padding-left: 0px;
-        }
-        #location_details p{
-            text-align:center;
-        }
-        #loader1 >img{
-            left:38%;
-        }
-        #footer{
-            background: rgb(211, 210, 210);
-            font-size: 8px;
-            margin-top: 10px;
-            margin-left: 0px;
-            padding-left: 10px;
-            padding-top: 8px;
-            height: 35px;
-            width:100%;
-        }
-        #places_list{
-            list-style-type: none;
-        }
+    #BackToNY{
+        font-size:9px;
     }
-
-    @media (min-width:501px) and (max-width: 1199px) {
-        #pano{
-            height: 300px;
-            width:300px;
-            margin-left:0px;
-        }
-        .red_text{
-            color:#B22222;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        #user_input_keyword, .location_selector{
-            width: 100%;
-            padding-left:20px;
-            -webkit-border-radius: 4px;
-                -moz-border-radius: 4px;
-                    border-radius: 4px !important;
-        }
-        #map_container {
-            height:770px;
-            margin-top:20px;
-            text-align:center;
-        }
-        #logo img{
-            margin-left:-15px;
-        }
-        #New-York {
-            padding-left:10px;
-        }
-        .list_of_locations {
-            padding-left:0px;
-            text-align:center;
-        }
-        .list_of_locations ul{
-            padding-left:0px;
-            list-style-type: none;
-        }
-        .input-group{
-            padding-left:0px;
-            width:100%;
-        }
-        #shareLoc{
-            margin-left:0px;
-        }
-        #share-location{
-            padding-left:0px;
-        }
-        #location_details{
-            padding-left: 0px;
-        }
-        #location_details p{
-            text-align:center;
-        }
-        #loader1 >img{
-            left:42%;
-            top:50%;
-        }
-        #BackToNY{
-            font-size:14px;
-        }
-        #places_list{
-            list-style-type: none;
-        }
-        #footer{
-            background: rgb(211, 210, 210);
-            font-size: 10px;
-            margin-top: 10px;
-            margin-left: 0px;
-            padding-left: 10px;
-            padding-top: 8px;
-            height: 35px;
-            width:100%;
-        }
+    #logo img{
+        height:80px;
     }
-    @media (min-width: 320px) and (max-width: 415px){
-        #pano{
-            height: 200px;
-            width:200px;
-            margin-left:0px;
-        }
-        .red_text{
-            color:#B22222;
-            font-weight: bold;
-            font-size: 16px;
-        }
-        #user_input_keyword, .location_selector{
-            width: 100%;
-            padding-left:20px;
-            -webkit-border-radius: 4px;
-                -moz-border-radius: 4px;
-                    border-radius: 4px !important;
-        }
-        #BackToNY{
-            font-size:9px;
-        }
-        #logo img{
-            height:80px;
-        }
-        #map_container {
-            height:500px;
-            margin-top:20px;
-            text-align:center;
-        }
-        #logo img{
-            margin-left:-15px;
-        }
-        #New-York {
-            padding-left:0px;
-        }
-        .list_of_locations {
-            padding-left:0px;
-            text-align:center;
-        }
-        .list_of_locations ul{
-            padding-left:0px;
-            list-style-type: none;
-        }
-        .input-group{
-            padding-left:0px;
-            width:100%;
-        }
-        .shareLoc{
-            margin-left:0px;
-        }
-        #share-location{
-            padding-left:0px;
-        }
-        #location_details{
-            padding-left: 0px;
-        }
-        #location_details p{
-            text-align:center;
-        }
-        #loader1 >img{
-            left:38%;
-        }
-        #footer{
-            background: rgb(211, 210, 210);
-            font-size: 8px;
-            margin-top: 10px;
-            margin-left: 0px;
-            padding-left: 10px;
-            padding-top: 8px;
-            height: 35px;
-            width:100%;
-        }
-        #places_list{
-            list-style-type: none;
-        }
+    #map_container {
+        height:500px;
+        margin-top:20px;
+        text-align:center;
     }
+    #logo img{
+        margin-left:-15px;
+    }
+    #New-York {
+        padding-left:0px;
+    }
+    .list_of_locations {
+        padding-left:0px;
+        text-align:center;
+    }
+    .list_of_locations ul{
+        padding-left:0px;
+        list-style-type: none;
+    }
+    .input-group{
+        padding-left:0px;
+        width:100%;
+    }
+    .shareLoc{
+        margin-left:0px;
+    }
+    #share-location{
+        padding-left:0px;
+    }
+    #location_details{
+        padding-left: 0px;
+    }
+    #location_details p{
+        text-align:center;
+    }
+    #loader1 >img{
+        left:38%;
+    }
+    #footer{
+        background: rgb(211, 210, 210);
+        font-size: 8px;
+        margin-top: 10px;
+        margin-left: 0px;
+        padding-left: 10px;
+        padding-top: 8px;
+        height: 35px;
+        width:100%;
+    }
+    #places_list{
+        list-style-type: none;
+    }
+}
